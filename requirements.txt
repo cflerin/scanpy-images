@@ -9,7 +9,7 @@ ipykernel==5.1.0
 ipython==7.3.0
 ipython-genutils==0.2.0
 jedi==0.13.3
-Jinja2==2.10
+Jinja2==2.10.1
 joblib==0.13.2
 jupyter-client==5.2.4
 jupyter-core==4.4.0
@@ -40,7 +40,7 @@ pyparsing==2.3.1
 pytest==4.3.0
 python-dateutil==2.8.0
 pytz==2018.9
-PyYAML==3.13
+PyYAML==5.1
 pyzmq==18.0.0
 scanpy==1.4
 scikit-learn==0.20.2
