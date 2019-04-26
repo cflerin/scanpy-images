@@ -5,4 +5,5 @@ Python-igraph is included as an additional package.
 
 Images are hosted on
 * [Docker Hub](https://cloud.docker.com/u/aertslab/repository/docker/aertslab/scanpy-images)
+* [Singularity Hub](https://www.singularity-hub.org/collections/2828)
 
