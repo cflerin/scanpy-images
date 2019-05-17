@@ -8,7 +8,6 @@ From: danigoland/py36-alpine-llvm6
 %environment
     PYTHONPATH=/usr/lib/python3.6/site-packages/:/usr/lib/python3.6/:/usr/lib/python3.6/lib-dynload/:${PYTHONPATH}
     export PYTHONPATH
-    export LC_ALL="en_US.UTF-8" 
 
 %post 
     echo "http://mirror1.hs-esslingen.de/pub/Mirrors/alpine/v3.8/main" >> /etc/apk/repositories
@@ -16,10 +15,11 @@ From: danigoland/py36-alpine-llvm6
     echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
     echo "http://mirror1.hs-esslingen.de/pub/Mirrors/alpine/edge/testing" >> /etc/apk/repositories
 
-     apk add --no-cache --virtual scanpy-runtime python3 bash git zlib hdf5 libgfortran libgcc libstdc++ musl openblas tcl tk libxml2 libffi
+    apk add --no-cache --virtual scanpy-runtime python3 bash git zlib hdf5 libgfortran libgcc libstdc++ musl openblas tcl tk libxml2 libffi
     apk add --no-cache --virtual .build-deps build-base wget git python3-dev zlib-dev hdf5-dev freetype-dev libtool m4 autoconf automake patch bison flex \
     libpng-dev openblas-dev tcl-dev tk-dev libxml2-dev zlib-dev linux-headers libffi-dev cmake
     ln -s /usr/include/locale.h /usr/include/xlocale.h
+    export LC_ALL="en_US.UTF-8" 
 
     cd /tmp/ && \
     git clone https://github.com/igraph/igraph.git && \
