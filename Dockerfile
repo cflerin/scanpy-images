@@ -1,38 +1,25 @@
-FROM danigoland/py36-alpine-llvm6
+FROM python:3.6.8-slim
 
-COPY ./requirements.txt /tmp/
+ENV DEBIAN_FRONTEND=noninteractive
 
-ENV PYTHONPATH /usr/lib/python3.6/site-packages/:/usr/lib/python3.6/:/usr/lib/python3.6/lib-dynload/:${PYTHONPATH}
-ENV	LC_ALL en_US.UTF-8
+RUN BUILDPKGS="build-essential apt-utils \
+        python3-dev libhdf5-dev libfreetype6-dev libtool \
+        m4 autoconf automake patch bison flex libpng-dev libopenblas-dev \
+        tcl-dev tk-dev libxml2-dev zlib1g-dev libffi-dev cmake" && \
+    apt-get update && \
+    apt-get install -y debconf locales && dpkg-reconfigure locales && \
+    apt-get install -y $BUILDPKGS && \
+    ### run time:
+    apt-get install -y zlib1g hdf5-tools gfortran libgcc1 libstdc++ musl \
+        libopenblas-base tcl tk libxml2 libffi6 less procps
 
-RUN echo "http://mirror1.hs-esslingen.de/pub/Mirrors/alpine/v3.8/main" >> /etc/apk/repositories && \
-    echo "http://mirror1.hs-esslingen.de/pub/Mirrors/alpine/v3.8/community" >> /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-    echo "http://mirror1.hs-esslingen.de/pub/Mirrors/alpine/edge/testing" >> /etc/apk/repositories
+# install dependencies:
+COPY requirements.txt /tmp/
 
-RUN apk add --no-cache --virtual scanpy-runtime python3 bash git zlib hdf5 libgfortran libgcc libstdc++ musl openblas tcl tk libxml2 libffi && \
-    apk add --no-cache --virtual .build-deps build-base wget git python3-dev zlib-dev hdf5-dev freetype-dev libtool m4 autoconf automake patch bison flex \
-        libpng-dev openblas-dev tcl-dev tk-dev libxml2-dev zlib-dev linux-headers libffi-dev cmake && \
-    ln -s /usr/include/locale.h /usr/include/xlocale.h
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r /tmp/requirements.txt && \
+    pip install --no-cache-dir ipykernel 
 
-RUN cd /tmp/ && \
-    git clone https://github.com/igraph/igraph.git && \
-    cd igraph && \
-    git checkout 6faf561 && \
-    ./bootstrap.sh && \
-    ./configure && make && make install
-
-RUN cd /tmp/ && \
-    git clone https://github.com/igraph/python-igraph.git && \
-    cd python-igraph && \
-    git checkout b570c4c && \
-    python3 setup.py install && \
-    ln -s /usr/lib/python3.6/site-packages/python_igraph-0.7.1.post6-py3.6-linux-x86_64.egg/igraph /usr/lib/python3.6/site-packages/igraph
-
-RUN pip3 install --no-cache-dir --upgrade pip && \
-    pip3 install --no-cache-dir "numpy==1.16.1"
-RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
-
-RUN apk del .build-deps && \
-    rm -rf /var/cache/apk/*
+RUN apt-get remove --purge -y $BUILDPKGS && \
+    rm -rf /var/lib/apt/lists/*
 
